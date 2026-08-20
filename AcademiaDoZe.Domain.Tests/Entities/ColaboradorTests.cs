@@ -1,4 +1,4 @@
-﻿using AcademiaDoZe.Domain.Entities;
+﻿using AcademiaDoZe.Domain.Entities;// Victor jeremias
 using AcademiaDoZe.Domain.Enums;
 using AcademiaDoZe.Domain.ValueObjects;
 namespace AcademiaDoZe.Domain.Tests.Entities;
