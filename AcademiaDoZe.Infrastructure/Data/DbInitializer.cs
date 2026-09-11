@@ -12,9 +12,28 @@ public static class DbInitializer
         if (string.IsNullOrWhiteSpace(connectionString)) return;
         var key = $"{databaseType}:{connectionString}";
         if (_bancosInicializados.ContainsKey(key)) return;
-        var scriptSql = ObterScript(databaseType);
+
         try
         {
+            if (databaseType == DatabaseType.SqlServer)
+            {
+                var masterConnectionString = connectionString.Replace("Initial Catalog=db_academia_do_ze", "Initial Catalog=master");
+                await using (var masterConnection = DbProvider.CreateConnection(masterConnectionString, databaseType))
+                {
+                    await masterConnection.OpenAsync(cancellationToken);
+                    var databaseExistsQuery = "SELECT CASE WHEN DB_ID('db_academia_do_ze') IS NOT NULL THEN 1 ELSE 0 END;";
+                    await using var databaseExistsCommand = DbProvider.CreateCommand(databaseExistsQuery, masterConnection);
+                    var databaseExists = Convert.ToInt32(await databaseExistsCommand.ExecuteScalarAsync(cancellationToken)) == 1;
+
+                    if (!databaseExists)
+                    {
+                        await using var createDatabaseCommand = DbProvider.CreateCommand("CREATE DATABASE db_academia_do_ze;", masterConnection);
+                        await createDatabaseCommand.ExecuteNonQueryAsync(cancellationToken);
+                    }
+                }
+            }
+
+            var scriptSql = ObterScript(databaseType);
             await using var connection = DbProvider.CreateConnection(connectionString, databaseType);
             await connection.OpenAsync(cancellationToken);
             await using var command = DbProvider.CreateCommand(scriptSql, connection);

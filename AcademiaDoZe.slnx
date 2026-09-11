@@ -3,6 +3,6 @@
     <Project Path="AcademiaDoZe.Domain.Tests/AcademiaDoZe.Domain.Tests.csproj" Id="68e0c7d9-613c-47eb-bc3d-7b8269845c6c" />
   </Folder>
   <Project Path="AcademiaDoZe.Domain/AcademiaDoZe.Domain.csproj" />
+  <Project Path="AcademiaDoZe.Infrastructure.Tests/AcademiaDoZe.Infrastructure.Tests.csproj" />
   <Project Path="AcademiaDoZe.Infrastructure/AcademiaDoZe.Infrastructure.csproj" />
-  <Project Path="Infrastructure/Infrastructure.csproj" />
 </Solution>

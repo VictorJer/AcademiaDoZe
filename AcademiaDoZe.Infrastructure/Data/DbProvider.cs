@@ -1,4 +1,6 @@
 using AcademiaDoZe.Infrastructure.Exceptions;
+using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 using System.Data;
 using System.Data.Common;
 namespace AcademiaDoZe.Infrastructure.Data;
@@ -23,6 +25,7 @@ public static class DbProvider
             DbConnection connection = dbType switch
             {
                 DatabaseType.SqlServer => new SqlConnection(connectionString),
+                DatabaseType.Sqlite => new SqliteConnection(connectionString),
                 _ => throw new InfrastructureException("SGDB_NAO_SUPORTADO", $"SGDB não suportado: {dbType}")
             };
             if (connection == null) throw new InfrastructureException("FALHA_CONEXAO", $"Falha ao instanciar conexão para {dbType}.");
@@ -77,8 +80,7 @@ public static class DbProvider
             throw new InfrastructureException("ERRO_CRIAR_PARAMETRO", "Erro ao criar parâmetro no banco de dados.", ex);
         }
     }
-    public static async Task<int> ExecuteScalarIdAsync(this DbCommand command, string errorCode = "ERRO_OBTER_ID", string errorMessage = "Falha ao obter ID
-    inserido no banco de dados.", CancellationToken cancellationToken = default)
+    public static async Task<int> ExecuteScalarIdAsync(this DbCommand command, string errorCode = "ERRO_OBTER_ID", string errorMessage = "Falha ao obter ID inserido no banco de dados.", CancellationToken cancellationToken = default)
     {
         var result = await command.ExecuteScalarAsync(cancellationToken);
         if (result != null && result != DBNull.Value)
