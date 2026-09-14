@@ -34,7 +34,7 @@ public class LogradouroInfrastructureTests : TestBase
         Assert.NotNull(inserido);
         Assert.True(inserido.Id > 0);
         Assert.Equal(cep, inserido.Cep.Valor);
-        Assert.Equal("Rua das Flores", inserido.Nome);
+        Assert.Equal(logradouro.Nome, inserido.Nome);
         var obtido = await _repository.ObterPorId(inserido.Id);
         Assert.NotNull(obtido);
         Assert.Equal(inserido.Id, obtido.Id);
