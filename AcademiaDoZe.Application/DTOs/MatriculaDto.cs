@@ -1,4 +1,4 @@
-// Thiago Kovalski
+// Victor Jeremiasiago Kovalski
 using AcademiaDoZe.Application.Enums;
 
 namespace AcademiaDoZe.Application.DTOs;

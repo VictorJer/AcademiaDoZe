@@ -1,4 +1,4 @@
-// Thiago Kovalski
+// Victor Jeremiasiago Kovalski
 using Konscious.Security.Cryptography;
 using System.Security.Cryptography;
 using System.Text;

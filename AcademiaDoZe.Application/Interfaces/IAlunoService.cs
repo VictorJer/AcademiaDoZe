@@ -1,4 +1,4 @@
-// Thiago Kovalski
+// Victor Jeremiasiago Kovalski
 using AcademiaDoZe.Application.DTOs;
 namespace AcademiaDoZe.Application.Interfaces;
 /// <summary>

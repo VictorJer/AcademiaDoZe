@@ -1,4 +1,4 @@
-// Thiago Kovalski
+// Victor Jeremiasiago Kovalski
 using AcademiaDoZe.Application.Interfaces;
 using AcademiaDoZe.Application.Services;
 using AcademiaDoZe.Domain.Repositories;
