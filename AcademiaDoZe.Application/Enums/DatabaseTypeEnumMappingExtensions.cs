@@ -1,6 +1,5 @@
-using AcademiaDoZe.Application.Enums;
 using AcademiaDoZe.Infrastructure.Data;
-namespace AcademiaDoZe.Application.Mappings;
+namespace AcademiaDoZe.Application.Enums;
 public static class DatabaseTypeEnumMappingExtensions
 {
 public static DatabaseType ToInfrastructure(this AppDatabaseType appDatabaseType)
