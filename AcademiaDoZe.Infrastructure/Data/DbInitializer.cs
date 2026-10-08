@@ -1,4 +1,5 @@
 using AcademiaDoZe.Infrastructure.Exceptions;
+using Microsoft.Data.SqlClient;
 using System.Collections.Concurrent;
 using System.Data.Common;
 using System.Reflection;
@@ -17,17 +18,28 @@ public static class DbInitializer
         {
             if (databaseType == DatabaseType.SqlServer)
             {
-                var masterConnectionString = connectionString.Replace("Initial Catalog=db_academia_do_ze", "Initial Catalog=master");
-                await using (var masterConnection = DbProvider.CreateConnection(masterConnectionString, databaseType))
+                var databaseBuilder = new SqlConnectionStringBuilder(connectionString);
+                var databaseName = databaseBuilder.InitialCatalog;
+                if (string.IsNullOrWhiteSpace(databaseName))
+                    throw new InfrastructureException("BANCO_NAO_INFORMADO", "Informe o banco de dados na string de conexão do SQL Server.");
+
+                var masterBuilder = new SqlConnectionStringBuilder(connectionString)
+                {
+                    InitialCatalog = "master"
+                };
+
+                await using (var masterConnection = DbProvider.CreateConnection(masterBuilder.ConnectionString, databaseType))
                 {
                     await masterConnection.OpenAsync(cancellationToken);
-                    var databaseExistsQuery = "SELECT CASE WHEN DB_ID('db_academia_do_ze') IS NOT NULL THEN 1 ELSE 0 END;";
+                    const string databaseExistsQuery = "SELECT CASE WHEN DB_ID(@DatabaseName) IS NOT NULL THEN 1 ELSE 0 END;";
                     await using var databaseExistsCommand = DbProvider.CreateCommand(databaseExistsQuery, masterConnection);
+                    databaseExistsCommand.AddParameter("@DatabaseName", databaseName, System.Data.DbType.String);
                     var databaseExists = Convert.ToInt32(await databaseExistsCommand.ExecuteScalarAsync(cancellationToken)) == 1;
 
                     if (!databaseExists)
                     {
-                        await using var createDatabaseCommand = DbProvider.CreateCommand("CREATE DATABASE db_academia_do_ze;", masterConnection);
+                        var escapedDatabaseName = databaseName.Replace("]", "]]", StringComparison.Ordinal);
+                        await using var createDatabaseCommand = DbProvider.CreateCommand($"CREATE DATABASE [{escapedDatabaseName}];", masterConnection);
                         await createDatabaseCommand.ExecuteNonQueryAsync(cancellationToken);
                     }
                 }

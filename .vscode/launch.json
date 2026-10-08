@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Academia do Zé (Windows)",
+      "type": "maui",
+      "request": "launch",
+      "project": "${workspaceFolder}\\AcademiaDoZe.Presentation.AppMaui\\AcademiaDoZe.Presentation.AppMaui.csproj",
+      "targetFramework": "net10.0-windows10.0.19041.0",
+      "configuration": "Debug",
+      "preLaunchTask": "AcademiaDoZe: Build Windows (Windows)",
+      "stopAtEntry": false
+    }
+  ]
+}

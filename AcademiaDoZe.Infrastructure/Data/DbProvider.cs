@@ -25,7 +25,10 @@ public static class DbProvider
             DbConnection connection = dbType switch
             {
                 DatabaseType.SqlServer => new SqlConnection(connectionString),
-                DatabaseType.Sqlite => new SqliteConnection(connectionString),
+                DatabaseType.Sqlite => new SqliteConnection(new SqliteConnectionStringBuilder(connectionString)
+                {
+                    ForeignKeys = true
+                }.ConnectionString),
                 _ => throw new InfrastructureException("SGDB_NAO_SUPORTADO", $"SGDB não suportado: {dbType}")
             };
             if (connection == null) throw new InfrastructureException("FALHA_CONEXAO", $"Falha ao instanciar conexão para {dbType}.");
@@ -82,6 +85,17 @@ public static class DbProvider
     }
     public static async Task<int> ExecuteScalarIdAsync(this DbCommand command, string errorCode = "ERRO_OBTER_ID", string errorMessage = "Falha ao obter ID inserido no banco de dados.", CancellationToken cancellationToken = default)
     {
+        if (command.Connection is SqliteConnection connection)
+        {
+            await command.ExecuteNonQueryAsync(cancellationToken);
+            await using var idCommand = CreateCommand("SELECT last_insert_rowid();", connection);
+            var sqliteId = await idCommand.ExecuteScalarAsync(cancellationToken);
+            if (sqliteId != null && sqliteId != DBNull.Value)
+                return Convert.ToInt32(sqliteId);
+
+            throw new InfrastructureException(errorCode, errorMessage);
+        }
+
         var result = await command.ExecuteScalarAsync(cancellationToken);
         if (result != null && result != DBNull.Value)
         {
@@ -108,7 +122,7 @@ public static class DbProvider
         {
             DatabaseType.SqlServer => $"{insertSql}; SELECT SCOPE_IDENTITY();",
             DatabaseType.MySql => $"{insertSql}; SELECT LAST_INSERT_ID();",
-            DatabaseType.Sqlite => $"{insertSql}; SELECT last_insert_rowid();",
+            DatabaseType.Sqlite => insertSql,
             _ => throw new InfrastructureException("SGDB_NAO_SUPORTADO", $"SGDB não suportado: {dbType}")
         };
     }
