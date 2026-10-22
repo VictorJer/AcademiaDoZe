@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AcademiaDoZe.Presentation.AppMaui.ViewModels"
+             xmlns:dto="clr-namespace:AcademiaDoZe.Application.DTOs;assembly=AcademiaDoZe.Application"
+             x:Class="AcademiaDoZe.Presentation.AppMaui.Views.AlunoListPage"
+             x:DataType="vm:AlunoListViewModel"
+             Title="{Binding Title}">
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0" Style="{StaticResource CardBorder}" Margin="15,10">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                <Entry Grid.Column="0" Text="{Binding SearchText}" Placeholder="Buscar por nome ou CPF" ReturnType="Search" />
+                <Button Grid.Column="1" Text="Buscar" Style="{StaticResource ButtonPrimary}" Command="{Binding SearchAlunosCommand}" />
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}">
+                <CollectionView ItemsSource="{Binding Alunos}" SelectionMode="None">
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout Spacing="12" VerticalOptions="Center">
+                            <Label Text="Nenhum aluno cadastrado" HorizontalOptions="Center" Style="{StaticResource SubHeadline}" />
+                            <Button Text="Cadastrar primeiro aluno" Command="{Binding AddAlunoCommand}" Style="{StaticResource ButtonPrimary}" Margin="20,0" />
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="dto:AlunoDto">
+                            <Border Style="{StaticResource CardBorder}" Margin="12,7">
+                                <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="6">
+                                    <Label Grid.Row="0" Grid.Column="0" Text="{Binding Nome}" FontAttributes="Bold" FontSize="17" />
+                                    <Label Grid.Row="1" Grid.Column="0" Text="{Binding Cpf, StringFormat='CPF: {0}'}" />
+                                    <Label Grid.Row="2" Grid.Column="0" Text="{Binding Telefone, StringFormat='Telefone: {0}'}" />
+                                    <Button Grid.Row="0" Grid.Column="1" Text="Editar" Style="{StaticResource ButtonSmall}" Clicked="OnEditButtonClicked" />
+                                    <Button Grid.Row="0" Grid.Column="2" Text="Excluir" Style="{StaticResource ButtonDanger}" Clicked="OnDeleteButtonClicked" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+
+            <Button Command="{Binding AddAlunoCommand}" Style="{StaticResource ButtonPrimary}"
+                    WidthRequest="58" HeightRequest="58" HorizontalOptions="End" VerticalOptions="End"
+                    Margin="20" CornerRadius="29" Padding="0" Text="+"
+                    FontSize="28" SemanticProperties.Hint="Cadastrar aluno" />
+        </Grid>
+        <ActivityIndicator Grid.RowSpan="2" IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}"
+                           VerticalOptions="Center" HorizontalOptions="Center" />
+    </Grid>
+</ContentPage>

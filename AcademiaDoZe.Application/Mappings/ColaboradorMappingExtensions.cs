@@ -84,8 +84,8 @@ public static class ColaboradorMappingExtensions
         senha,
         foto!,
         colaboradorDto.DataAdmissao != default ? colaboradorDto.DataAdmissao : colaborador.DataAdmissao,
-        colaboradorDto.Tipo != default ? colaboradorDto.Tipo.ToDomain() : colaborador.Tipo,
-        colaboradorDto.Vinculo != default ? colaboradorDto.Vinculo.ToDomain() : colaborador.Vinculo
+        colaboradorDto.Tipo.ToDomain(),
+        colaboradorDto.Vinculo.ToDomain()
         );
         if (result.IsFailure)
         {

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AcademiaDoZe.Presentation.AppMaui.ViewModels"
+             xmlns:dto="clr-namespace:AcademiaDoZe.Application.DTOs;assembly=AcademiaDoZe.Application"
+             x:Class="AcademiaDoZe.Presentation.AppMaui.Views.ColaboradorListPage"
+             x:DataType="vm:ColaboradorListViewModel"
+             Title="{Binding Title}">
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0" Style="{StaticResource CardBorder}" Margin="15,10">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                <Entry Grid.Column="0" Text="{Binding SearchText}" Placeholder="Buscar por nome, CPF ou função" ReturnType="Search" />
+                <Button Grid.Column="1" Text="Buscar" Style="{StaticResource ButtonPrimary}" Command="{Binding SearchColaboradoresCommand}" />
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}">
+                <CollectionView ItemsSource="{Binding Colaboradores}" SelectionMode="None">
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout Spacing="12" VerticalOptions="Center">
+                            <Label Text="Nenhum colaborador cadastrado" HorizontalOptions="Center" Style="{StaticResource SubHeadline}" />
+                            <Button Text="Cadastrar primeiro colaborador" Command="{Binding AddColaboradorCommand}" Style="{StaticResource ButtonPrimary}" Margin="20,0" />
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="dto:ColaboradorDto">
+                            <Border Style="{StaticResource CardBorder}" Margin="12,7">
+                                <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnSpacing="6">
+                                    <Label Grid.Row="0" Grid.Column="0" Text="{Binding Nome}" FontAttributes="Bold" FontSize="17" />
+                                    <Label Grid.Row="1" Grid.Column="0" Text="{Binding TipoDescricao, StringFormat='Função: {0}'}" />
+                                    <Label Grid.Row="2" Grid.Column="0" Text="{Binding VinculoDescricao, StringFormat='Vínculo: {0}'}" />
+                                    <Label Grid.Row="3" Grid.Column="0" Text="{Binding Cpf, StringFormat='CPF: {0}'}" />
+                                    <Label Grid.Row="4" Grid.Column="0" Text="{Binding Telefone, StringFormat='Telefone: {0}'}" />
+                                    <Button Grid.Row="0" Grid.Column="1" Text="Editar" Style="{StaticResource ButtonSmall}" Clicked="OnEditButtonClicked" />
+                                    <Button Grid.Row="0" Grid.Column="2" Text="Excluir" Style="{StaticResource ButtonDanger}" Clicked="OnDeleteButtonClicked" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+
+            <Button Command="{Binding AddColaboradorCommand}" Style="{StaticResource ButtonPrimary}"
+                    WidthRequest="58" HeightRequest="58" HorizontalOptions="End" VerticalOptions="End"
+                    Margin="20" CornerRadius="29" Padding="0" Text="+"
+                    FontSize="28" SemanticProperties.Hint="Cadastrar colaborador" />
+        </Grid>
+        <ActivityIndicator Grid.RowSpan="2" IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}"
+                           VerticalOptions="Center" HorizontalOptions="Center" />
+    </Grid>
+</ContentPage>

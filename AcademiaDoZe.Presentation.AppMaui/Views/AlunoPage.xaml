@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AcademiaDoZe.Presentation.AppMaui.ViewModels"
+             x:Class="AcademiaDoZe.Presentation.AppMaui.Views.AlunoPage"
+             x:DataType="vm:AlunoViewModel"
+             Title="{Binding Title}">
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Spacing="14" Padding="15,10,15,24">
+                <Border Style="{StaticResource CardBorder}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Dados do aluno" Style="{StaticResource SubHeadline}" />
+                        <Label Text="Nome completo" />
+                        <Entry Text="{Binding Aluno.Nome}" Placeholder="Nome do aluno" />
+                        <Label Text="CPF" />
+                        <Entry Text="{Binding Aluno.Cpf}" Placeholder="000.000.000-00" Keyboard="Numeric" IsEnabled="{Binding IsCpfEditable}" />
+                        <Label Text="Data de nascimento" />
+                        <DatePicker Date="{Binding DataNascimento}" />
+                        <Label Text="Telefone" />
+                        <Entry Text="{Binding Aluno.Telefone}" Placeholder="(00) 00000-0000" Keyboard="Telephone" />
+                        <Label Text="E-mail" />
+                        <Entry Text="{Binding Aluno.Email}" Placeholder="aluno@exemplo.com" Keyboard="Email" />
+                        <Label Text="Senha (mínimo 6 caracteres e uma letra maiúscula)" />
+                        <Entry Text="{Binding Aluno.Senha}" Placeholder="Obrigatória no cadastro; deixe em branco na edição para manter"
+                               IsPassword="True" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource CardBorder}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Endereço" Style="{StaticResource SubHeadline}" />
+                        <Label Text="Logradouro cadastrado" />
+                        <Picker Title="Selecione um endereço" ItemsSource="{Binding Enderecos}"
+                                ItemDisplayBinding="{Binding DescricaoCompleta}" SelectedItem="{Binding SelectedEndereco}" />
+                        <Label Text="Número" />
+                        <Entry Text="{Binding Aluno.Numero}" Placeholder="Número" Keyboard="Numeric" />
+                        <Label Text="Complemento" />
+                        <Entry Text="{Binding Aluno.Complemento}" Placeholder="Apartamento, bloco..." />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <Button Grid.Column="0" Text="Cancelar" Command="{Binding CancelCommand}" Style="{StaticResource ButtonSecondary}" />
+                    <Button Grid.Column="1" Text="Salvar aluno" Command="{Binding SaveAlunoCommand}" Style="{StaticResource ButtonPrimary}" />
+                </Grid>
+            </VerticalStackLayout>
+        </ScrollView>
+        <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}"
+                           VerticalOptions="Center" HorizontalOptions="Center" />
+    </Grid>
+</ContentPage>

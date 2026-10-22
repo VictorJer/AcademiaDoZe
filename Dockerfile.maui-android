@@ -1,0 +1,14 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0
+
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends openjdk-17-jdk-headless \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+ENV ANDROID_HOME=/opt/android-sdk
+
+RUN dotnet workload install maui-android
+
+WORKDIR /workspace
+CMD ["bash", "-lc", "dotnet build AcademiaDoZe.Presentation.AppMaui/AcademiaDoZe.Presentation.AppMaui.csproj -t:InstallAndroidDependencies -f net10.0-android -p:TargetFrameworks=net10.0-android -p:AndroidSdkDirectory=$ANDROID_HOME -p:JavaSdkDirectory=$JAVA_HOME -p:AcceptAndroidSDKLicenses=True && dotnet build AcademiaDoZe.Presentation.AppMaui/AcademiaDoZe.Presentation.AppMaui.csproj -p:TargetFrameworks=net10.0-android -p:AndroidSdkDirectory=$ANDROID_HOME -c Debug"]

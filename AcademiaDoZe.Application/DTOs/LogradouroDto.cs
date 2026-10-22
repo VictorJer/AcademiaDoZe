@@ -10,4 +10,5 @@ public class LogradouroDto
     public required string Cidade { get; set; }
     public required string Estado { get; set; }
     public required string Pais { get; set; }
+    public string DescricaoCompleta => $"{Nome}, {Bairro} - {Cidade}/{Estado} ({Cep})";
 }

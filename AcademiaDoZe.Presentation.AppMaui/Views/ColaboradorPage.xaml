@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AcademiaDoZe.Presentation.AppMaui.ViewModels"
+             x:Class="AcademiaDoZe.Presentation.AppMaui.Views.ColaboradorPage"
+             x:DataType="vm:ColaboradorViewModel"
+             Title="{Binding Title}">
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Spacing="14" Padding="15,10,15,24">
+                <Border Style="{StaticResource CardBorder}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Dados do colaborador" Style="{StaticResource SubHeadline}" />
+                        <Label Text="Nome completo" />
+                        <Entry Text="{Binding Colaborador.Nome}" Placeholder="Nome do colaborador" />
+                        <Label Text="CPF" />
+                        <Entry Text="{Binding Colaborador.Cpf}" Placeholder="000.000.000-00" Keyboard="Numeric" IsEnabled="{Binding IsCpfEditable}" />
+                        <Label Text="Data de nascimento" />
+                        <DatePicker Date="{Binding DataNascimento}" />
+                        <Label Text="Telefone" />
+                        <Entry Text="{Binding Colaborador.Telefone}" Placeholder="(00) 00000-0000" Keyboard="Telephone" />
+                        <Label Text="E-mail" />
+                        <Entry Text="{Binding Colaborador.Email}" Placeholder="colaborador@exemplo.com" Keyboard="Email" />
+                        <Label Text="Senha (mínimo 6 caracteres e uma letra maiúscula)" />
+                        <Entry Text="{Binding Colaborador.Senha}" Placeholder="Opcional na edição — deixe em branco para manter"
+                               IsPassword="True" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource CardBorder}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Vínculo com a academia" Style="{StaticResource SubHeadline}" />
+                        <Label Text="Função" />
+                        <Picker Title="Selecione a função" ItemsSource="{Binding Tipos}" SelectedItem="{Binding TipoSelecionado}" />
+                        <Label Text="Tipo de vínculo" />
+                        <Picker Title="Selecione o vínculo" ItemsSource="{Binding Vinculos}" SelectedItem="{Binding VinculoSelecionado}" />
+                        <Label Text="Data de admissão" />
+                        <DatePicker Date="{Binding DataAdmissao}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource CardBorder}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Endereço" Style="{StaticResource SubHeadline}" />
+                        <Label Text="Logradouro cadastrado" />
+                        <Picker Title="Selecione um endereço" ItemsSource="{Binding Enderecos}"
+                                ItemDisplayBinding="{Binding DescricaoCompleta}" SelectedItem="{Binding SelectedEndereco}" />
+                        <Label Text="Número" />
+                        <Entry Text="{Binding Colaborador.Numero}" Placeholder="Número" Keyboard="Numeric" />
+                        <Label Text="Complemento" />
+                        <Entry Text="{Binding Colaborador.Complemento}" Placeholder="Sala, bloco..." />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <Button Grid.Column="0" Text="Cancelar" Command="{Binding CancelCommand}" Style="{StaticResource ButtonSecondary}" />
+                    <Button Grid.Column="1" Text="Salvar colaborador" Command="{Binding SaveColaboradorCommand}" Style="{StaticResource ButtonPrimary}" />
+                </Grid>
+            </VerticalStackLayout>
+        </ScrollView>
+        <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}"
+                           VerticalOptions="Center" HorizontalOptions="Center" />
+    </Grid>
+</ContentPage>
