@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AcademiaDoZe.Presentation.AppMaui.ViewModels"
+             xmlns:dto="clr-namespace:AcademiaDoZe.Application.DTOs;assembly=AcademiaDoZe.Application"
+             xmlns:converters="clr-namespace:AcademiaDoZe.Presentation.AppMaui.Converters"
+             x:Class="AcademiaDoZe.Presentation.AppMaui.Views.MatriculaListPage"
+             x:Name="MatriculasPage"
+             x:DataType="vm:MatriculaListViewModel"
+             Title="{Binding Title}">
+    <ContentPage.Resources>
+        <converters:EnumDisplayConverter x:Key="EnumDisplay" />
+        <converters:RestricoesFlagsDisplayConverter x:Key="RestricoesDisplay" />
+        <converters:FotoToImageSourceConverter x:Key="FotoDisplay" />
+    </ContentPage.Resources>
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0" Style="{StaticResource CardBorder}" Margin="15,10">
+            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8" RowSpacing="8">
+                <Picker Grid.Row="0" Grid.Column="0" ItemsSource="{Binding FilterTypes}"
+                        SelectedItem="{Binding SelectedFilterType}" />
+                <Entry Grid.Row="1" Grid.Column="0" Text="{Binding SearchText}"
+                       Placeholder="Valor do filtro" ReturnType="Search" />
+                <Button Grid.Row="1" Grid.Column="1" Text="Buscar"
+                        Command="{Binding SearchMatriculasCommand}" Style="{StaticResource ButtonPrimary}" />
+            </Grid>
+        </Border>
+        <Grid Grid.Row="1">
+            <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}">
+                <CollectionView ItemsSource="{Binding Matriculas}" SelectionMode="None">
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout VerticalOptions="Center" Spacing="12">
+                            <Label Text="Nenhuma matrícula encontrada" HorizontalOptions="Center"
+                                   Style="{StaticResource SubHeadline}" />
+                            <Button Text="Cadastrar matrícula" Command="{Binding AddMatriculaCommand}"
+                                    Style="{StaticResource ButtonPrimary}" />
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="dto:MatriculaDto">
+                            <Border Style="{StaticResource CardBorder}" Margin="12,7">
+                                <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+                                      ColumnSpacing="10">
+                                    <Border Grid.RowSpan="5" WidthRequest="64" HeightRequest="64"
+                                            StrokeShape="RoundRectangle 32" VerticalOptions="Center">
+                                        <Image Source="{Binding AlunoMatricula.Foto, Converter={StaticResource FotoDisplay}}"
+                                               Aspect="AspectFill" />
+                                    </Border>
+                                    <Label Grid.Column="1" Text="{Binding AlunoMatricula.Nome}"
+                                           FontAttributes="Bold" FontSize="16" />
+                                    <Label Grid.Row="1" Grid.Column="1"
+                                           Text="{Binding AlunoMatricula.Cpf, StringFormat='CPF: {0}'}"
+                                           FontSize="12" />
+                                    <Label Grid.Row="2" Grid.Column="1"
+                                           Text="{Binding Plano, Converter={StaticResource EnumDisplay}}"
+                                           FontAttributes="Bold" />
+                                    <Label Grid.Row="3" Grid.Column="1"
+                                           Text="{Binding DataFim, StringFormat='Válida até: {0:dd/MM/yyyy}'}"
+                                           FontSize="12" />
+                                    <Label Grid.Row="4" Grid.Column="1"
+                                           Text="{Binding RestricoesMedicas, Converter={StaticResource RestricoesDisplay}}"
+                                           FontSize="12" LineBreakMode="TailTruncation" />
+                                    <VerticalStackLayout Grid.Column="2" Grid.RowSpan="5" Spacing="4">
+                                        <Button Text="Editar" Style="{StaticResource ButtonSmall}"
+                                                Command="{Binding BindingContext.EditMatriculaCommand, Source={x:Reference MatriculasPage}}"
+                                                CommandParameter="{Binding .}" />
+                                        <Button Text="Excluir" Style="{StaticResource ButtonDanger}"
+                                                Command="{Binding BindingContext.DeleteMatriculaCommand, Source={x:Reference MatriculasPage}}"
+                                                CommandParameter="{Binding .}" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+            <Button Text="+" FontSize="28" Padding="0" WidthRequest="58" HeightRequest="58"
+                    CornerRadius="29" HorizontalOptions="End" VerticalOptions="End" Margin="20"
+                    Command="{Binding AddMatriculaCommand}" Style="{StaticResource ButtonPrimary}" />
+        </Grid>
+        <ActivityIndicator Grid.RowSpan="2" IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+    </Grid>
+</ContentPage>

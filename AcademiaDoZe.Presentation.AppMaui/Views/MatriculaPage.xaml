@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AcademiaDoZe.Presentation.AppMaui.ViewModels"
+             xmlns:converters="clr-namespace:AcademiaDoZe.Presentation.AppMaui.Converters"
+             x:Class="AcademiaDoZe.Presentation.AppMaui.Views.MatriculaPage"
+             x:DataType="vm:MatriculaViewModel"
+             Title="{Binding Title}">
+    <ContentPage.Resources>
+        <converters:EnumDisplayConverter x:Key="EnumDisplay" />
+        <converters:FotoToImageSourceConverter x:Key="FotoDisplay" />
+    </ContentPage.Resources>
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="15,10,15,24" Spacing="14">
+                <Border Style="{StaticResource CardBorder}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Aluno da matrícula" Style="{StaticResource SubHeadline}" />
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <Entry Text="{Binding Matricula.AlunoMatricula.Cpf}" Placeholder="CPF do aluno"
+                                   Keyboard="Numeric" ReturnCommand="{Binding SearchByCpfCommand}" />
+                            <Button Grid.Column="1" Text="Buscar" Command="{Binding SearchByCpfCommand}"
+                                    Style="{StaticResource ButtonPrimary}" />
+                        </Grid>
+                        <Border Padding="10" IsVisible="{Binding HasAlunoVinculado}">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                <Image WidthRequest="64" HeightRequest="64"
+                                       Source="{Binding Matricula.AlunoMatricula.Foto, Converter={StaticResource FotoDisplay}}" />
+                                <VerticalStackLayout Grid.Column="1">
+                                    <Label Text="{Binding Matricula.AlunoMatricula.Nome}" FontAttributes="Bold" />
+                                    <Label Text="{Binding Matricula.AlunoMatricula.Cpf, StringFormat='CPF: {0}'}" />
+                                    <Label Text="{Binding Matricula.AlunoMatricula.DataNascimento, StringFormat='Nascimento: {0:dd/MM/yyyy}'}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                        <Label Text="Nenhum aluno selecionado" IsVisible="{Binding HasNoAlunoVinculado}"
+                               TextColor="DarkOrange" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Style="{StaticResource CardBorder}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Plano e vigência" Style="{StaticResource SubHeadline}" />
+                        <Picker ItemsSource="{Binding PlanoTipos}" SelectedItem="{Binding Matricula.Plano}"
+                                SelectedIndexChanged="OnPlanoChanged"
+                                ItemDisplayBinding="{Binding ., Converter={StaticResource EnumDisplay}}" />
+                        <DatePicker Date="{Binding DataInicioDate}" DateSelected="OnInicioChanged" />
+                        <Label Text="{Binding DataFimDisplay, StringFormat='Término calculado: {0}'}" />
+                        <Entry Text="{Binding Matricula.Objetivo}" Placeholder="Objetivo da matrícula" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Style="{StaticResource CardBorder}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Restrições médicas" Style="{StaticResource SubHeadline}" />
+                        <CollectionView ItemsSource="{Binding RestricoesMulti}" HeightRequest="190">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="vm:RestricaoSelectable">
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <CheckBox IsChecked="{Binding IsSelected}" />
+                                        <Label Grid.Column="1" VerticalOptions="Center"
+                                               Text="{Binding Value, Converter={StaticResource EnumDisplay}}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                        <Entry Text="{Binding Matricula.ObservacoesRestricoes}"
+                               Placeholder="Observações sobre as restrições" />
+                        <Label Text="Laudo médico obrigatório" TextColor="DarkOrange"
+                               IsVisible="{Binding ExigeLaudo}" />
+                        <Button Text="Selecionar laudo médico" Command="{Binding SelecionarLaudoCommand}"
+                                Style="{StaticResource ButtonSecondary}" />
+                        <Button Text="Remover laudo" Command="{Binding RemoverLaudoCommand}"
+                                IsVisible="{Binding HasLaudo}" Style="{StaticResource ButtonDanger}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <Button Text="Cancelar" Command="{Binding CancelCommand}" Style="{StaticResource ButtonSecondary}" />
+                    <Button Grid.Column="1" Text="Salvar matrícula" Command="{Binding SaveMatriculaCommand}"
+                            Style="{StaticResource ButtonPrimary}" />
+                </Grid>
+            </VerticalStackLayout>
+        </ScrollView>
+        <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}"
+                           HorizontalOptions="Center" VerticalOptions="Center" />
+    </Grid>
+</ContentPage>

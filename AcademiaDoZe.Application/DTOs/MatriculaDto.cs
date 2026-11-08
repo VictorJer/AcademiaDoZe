@@ -14,4 +14,5 @@ public class MatriculaDto
     public required AppMatriculaRestricoes RestricoesMedicas { get; set; }
     public string? ObservacoesRestricoes { get; set; }
     public ArquivoDto? LaudoMedico { get; set; }
+    public bool RemoverLaudo { get; set; }
 }
