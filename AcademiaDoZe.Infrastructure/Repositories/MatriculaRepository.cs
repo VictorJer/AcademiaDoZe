@@ -201,8 +201,9 @@ INNER JOIN tb_logradouro l ON a.logradouro_id = l.id_logradouro";
     {
         try
         {
-            string hoje = $"CAST({GetCurrentDateFunction()} AS DATE)";
-            string query = $"{BaseSelectQuery} WHERE m.aluno_id = @AlunoId AND {hoje} BETWEEN m.data_inicio AND m.data_fim ORDER BY m.data_fim DESC";
+            string query = _databaseType == DatabaseType.Sqlite
+                ? $"{BaseSelectQuery} WHERE m.aluno_id = @AlunoId AND DATE(m.data_inicio) <= DATE('now') AND DATE(m.data_fim) >= DATE('now') ORDER BY m.data_fim DESC"
+                : $"{BaseSelectQuery} WHERE m.aluno_id = @AlunoId AND CAST({GetCurrentDateFunction()} AS DATE) BETWEEN m.data_inicio AND m.data_fim ORDER BY m.data_fim DESC";
             await using var command = await CreateCommandAsync(query, cancellationToken);
             command.AddParameter("@AlunoId", alunoId, DbType.Int32);
             await using var reader = await command.ExecuteReaderAsync(cancellationToken);
@@ -218,8 +219,9 @@ INNER JOIN tb_logradouro l ON a.logradouro_id = l.id_logradouro";
     {
         try
         {
-            string hoje = $"CAST({GetCurrentDateFunction()} AS DATE)";
-            string query = $"SELECT COUNT(1) FROM tb_matricula WHERE aluno_id = @AlunoId AND {hoje} BETWEEN data_inicio AND data_fim";
+            string query = _databaseType == DatabaseType.Sqlite
+                ? "SELECT COUNT(1) FROM tb_matricula WHERE aluno_id = @AlunoId AND DATE(data_inicio) <= DATE('now') AND DATE(data_fim) >= DATE('now')"
+                : $"SELECT COUNT(1) FROM tb_matricula WHERE aluno_id = @AlunoId AND CAST({GetCurrentDateFunction()} AS DATE) BETWEEN data_inicio AND data_fim";
             await using var command = await CreateCommandAsync(query, cancellationToken);
             command.AddParameter("@AlunoId", alunoId, DbType.Int32);
             var count = Convert.ToInt32(await command.ExecuteScalarAsync(cancellationToken));
@@ -235,8 +237,9 @@ INNER JOIN tb_logradouro l ON a.logradouro_id = l.id_logradouro";
     {
         try
         {
-            string hoje = $"CAST({GetCurrentDateFunction()} AS DATE)";
-            string query = $"{BaseSelectQuery} WHERE {hoje} BETWEEN m.data_inicio AND m.data_fim";
+            string query = _databaseType == DatabaseType.Sqlite
+                ? $"{BaseSelectQuery} WHERE DATE(m.data_inicio) <= DATE('now') AND DATE(m.data_fim) >= DATE('now')"
+                : $"{BaseSelectQuery} WHERE CAST({GetCurrentDateFunction()} AS DATE) BETWEEN m.data_inicio AND m.data_fim";
             if (alunoId > 0)
             {
                 query += " AND m.aluno_id = @AlunoId";
