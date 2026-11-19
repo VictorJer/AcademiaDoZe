@@ -28,6 +28,24 @@ public class AcessoColaboradorService : IAcessoColaboradorService
         ArgumentNullException.ThrowIfNull(acessoDto);
         var colaborador = await _colaboradorRepoFactory().ObterPorId(acessoDto.ColaboradorId, cancellationToken)
             ?? throw new KeyNotFoundException($"Colaborador com ID {acessoDto.ColaboradorId} não encontrado.");
+        var hoje = DateOnly.FromDateTime(acessoDto.DataHora);
+        var acessosHoje = (await _acessoRepoFactory()
+            .ObterAcessosPorColaboradorPeriodo(acessoDto.ColaboradorId, hoje, hoje, cancellationToken))
+            .ToList();
+
+        var estaDentro = acessosHoje.Count % 2 == 1;
+        if (!estaDentro)
+        {
+            var horasHoje = await _acessoRepoFactory().ObterHorasTrabalhadasNoDia(acessoDto.ColaboradorId, hoje, cancellationToken);
+            var limite = colaborador.Vinculo == Domain.Enums.ColaboradorVinculo.Estagio
+                ? TimeSpan.FromHours(6)
+                : TimeSpan.FromHours(8);
+            if (horasHoje >= limite)
+            {
+                throw new InvalidOperationException($"O colaborador já atingiu o limite diário de {limite.TotalHours:N0} horas.");
+            }
+        }
+
         var result = Domain.Entities.AcessoColaborador.Criar(acessoDto.Id, colaborador, acessoDto.DataHora);
         if (result.IsFailure)
             throw new InvalidOperationException($"Erro de validação ao registrar acesso: {string.Join(", ", result.Notifications.Select(n => n.Mensagem))}");

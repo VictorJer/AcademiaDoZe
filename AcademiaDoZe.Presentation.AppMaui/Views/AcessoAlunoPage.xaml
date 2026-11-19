@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AcademiaDoZe.Presentation.AppMaui.ViewModels"
+             xmlns:dto="clr-namespace:AcademiaDoZe.Application.DTOs;assembly=AcademiaDoZe.Application"
+             x:Class="AcademiaDoZe.Presentation.AppMaui.Views.AcessoAlunoPage"
+             x:DataType="vm:AcessoAlunoViewModel"
+             Title="{Binding Title}">
+    <VerticalStackLayout Padding="20" Spacing="16">
+        <Label Text="Aluno" FontAttributes="Bold"/>
+        <Picker ItemsSource="{Binding Alunos}" SelectedItem="{Binding AlunoSelecionado}"
+                ItemDisplayBinding="{Binding Nome}" Title="Selecione o aluno"/>
+        <Label Text="{Binding Situacao}" Style="{StaticResource SubHeadline}"/>
+        <Button Text="Registrar entrada / saída" Command="{Binding RegistrarCommand}" Style="{StaticResource ButtonPrimary}"/>
+        <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}"/>
+    </VerticalStackLayout>
+</ContentPage>

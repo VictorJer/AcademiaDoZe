@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AcademiaDoZe.Presentation.AppMaui.ViewModels"
+             x:Class="AcademiaDoZe.Presentation.AppMaui.Views.AcessoColaboradorPage"
+             x:DataType="vm:AcessoColaboradorViewModel"
+             Title="{Binding Title}">
+    <VerticalStackLayout Padding="20" Spacing="16">
+        <Label Text="Colaborador" FontAttributes="Bold"/>
+        <Picker ItemsSource="{Binding Colaboradores}" SelectedItem="{Binding ColaboradorSelecionado}"
+                ItemDisplayBinding="{Binding Nome}" Title="Selecione o colaborador"/>
+        <Label Text="{Binding Situacao}" Style="{StaticResource SubHeadline}"/>
+        <Button Text="Registrar entrada / saída" Command="{Binding RegistrarCommand}" Style="{StaticResource ButtonPrimary}"/>
+        <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}"/>
+    </VerticalStackLayout>
+</ContentPage>

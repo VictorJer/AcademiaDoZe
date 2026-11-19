@@ -187,7 +187,13 @@ WHERE id_acesso = @Id AND pessoa_tipo = @PessoaTipo";
     {
         try
         {
-            var query = @"SELECT TOP 1 id_acesso, pessoa_tipo, pessoa_id, data_hora
+            var query = _databaseType == DatabaseType.Sqlite
+                ? @"SELECT id_acesso, pessoa_tipo, pessoa_id, data_hora
+FROM tb_acesso
+WHERE pessoa_tipo = @PessoaTipo AND pessoa_id = @AlunoId
+ORDER BY data_hora DESC
+LIMIT 1"
+                : @"SELECT TOP 1 id_acesso, pessoa_tipo, pessoa_id, data_hora
 FROM tb_acesso
 WHERE pessoa_tipo = @PessoaTipo AND pessoa_id = @AlunoId
 ORDER BY data_hora DESC";

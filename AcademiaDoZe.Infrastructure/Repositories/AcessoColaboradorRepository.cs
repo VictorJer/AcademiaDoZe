@@ -187,7 +187,13 @@ WHERE id_acesso = @Id AND pessoa_tipo = @PessoaTipo";
     {
         try
         {
-            var query = @"SELECT TOP 1 id_acesso, pessoa_tipo, pessoa_id, data_hora
+            var query = _databaseType == DatabaseType.Sqlite
+                ? @"SELECT id_acesso, pessoa_tipo, pessoa_id, data_hora
+FROM tb_acesso
+WHERE pessoa_tipo = @PessoaTipo AND pessoa_id = @ColaboradorId
+ORDER BY data_hora DESC
+LIMIT 1"
+                : @"SELECT TOP 1 id_acesso, pessoa_tipo, pessoa_id, data_hora
 FROM tb_acesso
 WHERE pessoa_tipo = @PessoaTipo AND pessoa_id = @ColaboradorId
 ORDER BY data_hora DESC";
@@ -230,10 +236,12 @@ ORDER BY data_hora";
                 acessos.Add(reader.GetDateTimeValue("data_hora"));
             }
 
-            if (acessos.Count <= 1)
-                return TimeSpan.Zero;
-
-            return acessos[^1] - acessos[0];
+            var total = TimeSpan.Zero;
+            for (var i = 0; i + 1 < acessos.Count; i += 2)
+            {
+                total += acessos[i + 1] - acessos[i];
+            }
+            return total;
         }
         catch (DbException ex)
         {

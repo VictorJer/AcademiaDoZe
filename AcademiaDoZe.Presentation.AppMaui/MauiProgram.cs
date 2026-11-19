@@ -34,6 +34,8 @@ public static class MauiProgram
         builder.Services.AddTransient<ColaboradorViewModel>();
         builder.Services.AddTransient<MatriculaListViewModel>();
         builder.Services.AddTransient<MatriculaViewModel>();
+        builder.Services.AddTransient<AcessoAlunoViewModel>();
+        builder.Services.AddTransient<AcessoColaboradorViewModel>();
 
         // Registrar Views
         builder.Services.AddTransient<DashboardListPage>();
@@ -46,6 +48,8 @@ public static class MauiProgram
         builder.Services.AddTransient<ConfigPage>();
         builder.Services.AddTransient<MatriculaListPage>();
         builder.Services.AddTransient<MatriculaPage>();
+        builder.Services.AddTransient<AcessoAlunoPage>();
+        builder.Services.AddTransient<AcessoColaboradorPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();
